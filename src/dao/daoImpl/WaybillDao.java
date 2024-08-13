@@ -2,6 +2,6 @@ package dao.daoImpl;
 
 import dao.Dao;
 
-public class DaoImpl implements Dao {
+public class WaybillDao implements Dao {
 
 }
