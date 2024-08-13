@@ -1,7 +1,7 @@
 package dao.daoImpl;
 
-import dao.Dao;
+import dao.ReleaseDao;
 
-public class WaybillDao implements Dao {
+public class WaybillDao {
 
 }
