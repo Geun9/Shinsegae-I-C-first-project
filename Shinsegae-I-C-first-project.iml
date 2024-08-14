@@ -6,12 +6,12 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test1" isTestSource="true" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="17" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../data/mysql/mysql-connector-java-8.0.21/mysql-connector-java-8.0.21.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/mysql-connector-j-9.0.0/mysql-connector-j-9.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -20,7 +20,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../data/lombok.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/lombok.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

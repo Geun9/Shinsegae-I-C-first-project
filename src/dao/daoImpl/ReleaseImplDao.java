@@ -7,9 +7,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class ReleaseImpl implements ReleaseDao {
+public class ReleaseImplDao implements ReleaseDao {
 
   static ConnectionFactory factory = new ConnectionFactory().getInstance();
   static ResultSet rs = null;
@@ -30,7 +32,7 @@ public class ReleaseImpl implements ReleaseDao {
     con = factory.open();
 
     //유저 이름, 요청인(유저이름), 상품 이름, 종류, 개수, 출고 상태,
-    String query = "INSERT TABLE user VALUES(?,?,?,?,?,?,?)";
+    String query = "INSERT TABLE user VALUES(?,?,?,?,?,?,?,?,?,?)";
     try {
       pstmt = con.prepareStatement(query);
       rs = pstmt.executeQuery();
@@ -45,21 +47,22 @@ public class ReleaseImpl implements ReleaseDao {
     }
   }
 
-  public void approvalRelease(){
-    stokeCheck();
-
-
-  }
-
-  //재고 수량과 출고하고 싶은 상품 수량 비교하는 부분
-  public void stokeCheck(){
+  public List<ReleaseDto> findAll(){
+    List<ReleaseDto> releaseAll = new ArrayList<>();
     con = factory.open();
 
-    String query = "SELECT quantity FROM stock s INNER JOIN product p on s.id = p.id";
+    String query = "SELECT * FROM release";
     try {
       pstmt = con.prepareStatement(query);
       rs = pstmt.executeQuery();
 
+      while(rs.next()){
+        String name = rs.getString("name");
+        int value = rs.getInt("value");
+
+        ReleaseDto dto = new ReleaseDto(생략);
+        releaseAll.add(dto);
+      }
 
       pstmt.close();
       rs.close();
@@ -67,9 +70,54 @@ public class ReleaseImpl implements ReleaseDao {
     } catch (SQLException e) {
       System.err.println("커넥션 에러");
     }
+
+    return releaseAll;
   }
 
-  private void findByAll(){
+  //재고 수량과 출고하고 싶은 상품 수량 비교하는 부분
+  @Override
+  public boolean stockCheck() {
+    boolean check = false;
+    con = factory.open();
 
+    String query = "SELECT quantity FROM stock s INNER JOIN product p on s.id = p.id";
+    try {
+      pstmt = con.prepareStatement(query);
+      rs = pstmt.executeQuery();
+
+      int stock = rs.getInt("quantity");
+
+      if(stock >  amount)
+        check = true;
+
+      pstmt.close();
+      rs.close();
+      con.close();
+    } catch (SQLException e) {
+      System.err.println("커넥션 에러");
+    }
+
+    return check;
+  }
+
+  //status를 바꿔주는 부분
+  @Override
+  public void statusRelease(int id, boolean check){
+    con = factory.open();
+
+    String query = "UPDATE release SET status = 'reject' WHERE id = ?";
+    try {
+      pstmt = con.prepareStatement(query);
+      rs = pstmt.executeQuery();
+
+      // ?를 여기서 구현
+      // 테이블 업데이트
+
+      pstmt.close();
+      rs.close();
+      con.close();
+    } catch (SQLException e) {
+      System.err.println("커넥션 에러");
+    }
   }
 }
