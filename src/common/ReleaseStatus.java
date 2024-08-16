@@ -9,5 +9,5 @@ public enum ReleaseStatus {
   DELIVERY,
   WAYBILL,
   TRANSIT,
-  CLEAR
+  CLEAR;
 }

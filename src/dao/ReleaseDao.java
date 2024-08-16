@@ -1,6 +1,9 @@
 package dao;
 
+import dto.ReleaseDto;
+
 public interface ReleaseDao {
-  boolean stockCheck();
-  void statusRelease(int id, boolean check);
+  int stockCheck(int id);
+  void createRelease(ReleaseDto releaseDto);
+  void updateRelease(int id, int select);
 }
