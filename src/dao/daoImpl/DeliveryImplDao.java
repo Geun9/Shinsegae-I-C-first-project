@@ -7,10 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class DeliveryImplDao implements DeliveryDao {
     static ConnectionFactory factory = new ConnectionFactory().getInstance();
@@ -19,8 +15,20 @@ public class DeliveryImplDao implements DeliveryDao {
     static Connection con = null;
 
     @Override
-    public void createDelivery(int id){
-        deliveryManCheck(id);
+    public void createDelivery(int release_id){
+//        배차 ID id
+//        출고 ID release_id
+//        회원 ID admin_id
+//        유저 ID user_id
+//        창고 ID warehouse_id
+//        배송비 fee
+//        배차 등록 날짜
+//        배송 출발 날짜
+//        도착 예정 날짜
+//        요청 사항
+//        배송 상태
+
+         deliveryManCheck();
 
         con = factory.open();
 
@@ -28,15 +36,7 @@ public class DeliveryImplDao implements DeliveryDao {
         try {
             pstmt = con.prepareStatement(query);
 
-            pstmt.setInt(1, 1);//user.getId(); -> user의 아이디
-            pstmt.setString(2, releaseDto.getProduct_id());
-            pstmt.setString(3, releaseDto.getCustomer_name());
-            pstmt.setString(4, releaseDto.getCustomer_address());
-            pstmt.setInt(5, releaseDto.getAmount());
-            pstmt.setString(6, releaseDto.getReleaseStatus().name());
-            pstmt.setString(7, releaseDto.getRemarks());
-            SimpleDateFormat request_date = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            String formattedDate = request_date.format(new Date());
+
             pstmt.setString(8, formattedDate);
 
             pstmt.executeUpdate();
@@ -54,25 +54,17 @@ public class DeliveryImplDao implements DeliveryDao {
     }
 
     @Override
-    public Queue<Admin> deliveryManCheck(int id) {
+    public void deliveryManCheck() {
         //admin필요 -> 배송기사 조회
-        Queue<Admin> qAdmin = new LinkedList<Admin>();
         con = factory.open();
 
-        String query = "SELECT * FROM admin WHERE position = 'DELIVERY'";
+        String query = "SELECT id FROM admin WHERE position = 'DELIVERY' AND status = 'WAIT' ORDER BY end_date ASC NULLS FIRST LIMIT 1";
         try {
             pstmt = con.prepareStatement(query);
             rs = pstmt.executeQuery();
 
             while(rs.next()){
-                int admin_id = rs.getInt("id");
-                String name = rs.getString("name");
-                String position = rs.getString("position");
-                String department = rs.getString("department");
 
-                // admin에서의 생성자
-                Admin admin = new Admin(admin_id, name, position, department);
-                qAdmin.add(admin);
             }
             pstmt.close();
             con.close();
@@ -81,6 +73,5 @@ public class DeliveryImplDao implements DeliveryDao {
             e.printStackTrace();
         }
 
-        return qAdmin;
     }
 }

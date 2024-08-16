@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +21,6 @@ public class ReleaseImplDao implements ReleaseDao {
   static ResultSet rs = null;
   static PreparedStatement pstmt = null;
   static Connection con = null;
-  static StringBuilder query1 = new StringBuilder();
 
   public void createRelease(ReleaseDto releaseDto){
     if(!productCheck(releaseDto.getProduct_id())) {
@@ -44,9 +45,10 @@ public class ReleaseImplDao implements ReleaseDao {
       pstmt.setInt(5, releaseDto.getAmount());
       pstmt.setString(6, releaseDto.getReleaseStatus().name());
       pstmt.setString(7, releaseDto.getRemarks());
-      SimpleDateFormat request_date = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-      String formattedDate = request_date.format(new Date());
-      pstmt.setString(8, formattedDate);
+      LocalDateTime dateTime = LocalDateTime.now();
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+      String request_date = dateTime.format(formatter);
+      pstmt.setString(8, request_date);
 
       pstmt.executeUpdate();
       pstmt.close();
@@ -108,7 +110,7 @@ public class ReleaseImplDao implements ReleaseDao {
     String query = "SELECT quantity FROM stock s INNER JOIN product p on p.id = ? and s.product_id = p.id";
 
     try {
-      pstmt = con.prepareStatement(query1.toString());
+      pstmt = con.prepareStatement(query);
       pstmt.setString(1,findDto.getProduct_id());
       rs = pstmt.executeQuery();
 
@@ -144,10 +146,10 @@ public class ReleaseImplDao implements ReleaseDao {
         pstmt.setString(1, ReleaseStatus.REJECTED.toString());
       else
         pstmt.setString(1, ReleaseStatus.CANCEL.toString());
-
-      SimpleDateFormat approval_date = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-      String formattedDate = approval_date.format(new Date());
-      pstmt.setString(2, formattedDate);
+      LocalDateTime dateTime = LocalDateTime.now();
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+      String approval_date = dateTime.format(formatter);
+      pstmt.setString(2, approval_date);
       pstmt.setInt(3, id);
 
       pstmt.executeUpdate();
