@@ -9,15 +9,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
+import dto.WaybillDto;
 import service.serviceImpl.DeliveryServiceImpl;
 import service.serviceImpl.ReleaseServiceImpl;
+import service.serviceImpl.ShippingInstructionServiceImpl;
+import service.serviceImpl.WaybillServiceImpl;
 
 public class ReleaseController {
 
   static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
   static ReleaseServiceImpl releaseService = new ReleaseServiceImpl();
   static DeliveryServiceImpl deliveryService = new DeliveryServiceImpl();
+  static WaybillServiceImpl waybillService = new WaybillServiceImpl();
+  static ShippingInstructionServiceImpl shippingInstructionService = new ShippingInstructionServiceImpl();
+  static StringBuilder waybill = new StringBuilder();
   static int id = 0;
 
   public static void main(String[] args){
@@ -74,10 +81,8 @@ public class ReleaseController {
                               id = Integer.parseInt(br.readLine());
                               if (id == 0)
                                   break;
-                              else {
+                              else
                                   releaseService.updateRelease(id, 3);
-                                  System.out.println("취소 완료");
-                              }
                               break;
                           case 4:
                               loop = false;
@@ -93,7 +98,7 @@ public class ReleaseController {
                       System.out.println("1. 출고 관리 2. 배송 관리 3. 운송장 관리 4. 나가기");
                       switch (Integer.parseInt(br.readLine())) {
                           case 1:
-                              System.out.println("1. 전체 조회 2. 요청 승인 조회 3. 요청 거절 조회 4. 출고 승인 5. 출고 거절 6. 뒤로");
+                              System.out.println("1. 전체 조회 2. 요청 승인 조회 3. 요청 거절 조회 4. 출고 승인 5. 출고 거절 6. 출고 지시서 조회 7. 뒤로");
                               switch (Integer.parseInt(br.readLine())) {
                                   case 1:
                                       releaseAll();
@@ -136,6 +141,8 @@ public class ReleaseController {
                                       break;
                                   case 6:
                                       break;
+                                  case 7:
+                                      break;
                                   default:
                                       System.out.println("다시 입력하세요.");
                                       break;
@@ -166,7 +173,7 @@ public class ReleaseController {
                                       System.out.println("배차를 취소하시겠습니까?");
                                       System.out.println("1.네 2. 아니요");
                                       if (Integer.parseInt(br.readLine()) == 1) {
-                                          deliveryService.deleteDelivery(id);
+                                          deliveryService.updateDelivery(id);
                                           System.out.println("배차 취소가 완료되었습니다.");
                                       }
                                       break;
@@ -222,7 +229,7 @@ public class ReleaseController {
                                       break;
                                   case 5:
                                       DeliveryImplDao deliveryImplDao = new DeliveryImplDao();
-                                      System.out.println(deliveryImplDao.waitDeliveryMan().size());
+                                      System.out.printf("배송 가능 인원 : %d명 입니다.",deliveryImplDao.waitDeliveryMan().size());
                                       break;
                                   case 6:
                                       break;
@@ -231,7 +238,58 @@ public class ReleaseController {
                                       break;
                               }
                               break;
-                          case 3:
+                          case 3://운송장
+                              System.out.println("1. 운송장 등록 2. 운송장 조회 3. 운송장 전체 조회 4. 나가기");
+                              switch (Integer.parseInt(br.readLine())) {
+                                  case 1:
+                                      System.out.println("배차 아이디 입력 (나가기 : 0) : ");
+                                      int delivery_id = Integer.parseInt(br.readLine());
+                                      if(delivery_id == 0)
+                                          break;
+                                      Random random = new Random();
+                                      int randomNumber1 = random.nextInt(9000) + 1000;
+                                      int randomNumber2 = random.nextInt(9000) + 1000;
+                                      int randomNumber3 = random.nextInt(9000) + 1000;
+                                      waybill.append(randomNumber1).append('-')
+                                              .append(randomNumber2).append('-')
+                                              .append(randomNumber3);
+                                      System.out.println(waybill.toString());
+                                      WaybillDto waybilldto = new WaybillDto(waybill.toString(),delivery_id);
+                                      waybillService.createRelease(waybilldto);
+                                      break;
+                                  case 2:
+                                      System.out.println("운송장 번호 입력 (나가기 : 0) : ");
+                                      int waybill_id = Integer.parseInt(br.readLine());
+                                      if(waybill_id == 0)
+                                          break;
+                                      WaybillDto findId = waybillService.getId(waybill_id);
+                                      String updated_at = Optional.ofNullable(findId.getUpdated_at()).orElse("");
+                                      System.out.println("운송장 아이디 | 운송장 번호 | 배송 아이디 | 출고 아이디 | 등록 날짜 ㅣ 운송장 수정 날짜");
+                                      System.out.printf("|\t%d\t|\t%s\t|\t%d\t|\t%d\t|\t%s\t|\t%s",
+                                              findId.getId(),
+                                              findId.getWaybill_number(),
+                                              findId.getDelivery_id(),
+                                              findId.getRelease_id(),
+                                              findId.getCreated_at(),
+                                              updated_at);
+                                      break;
+                                  case 3:
+                                      List<WaybillDto> findAll = waybillService.getAll();
+                                      System.out.println("운송장 아이디 | 운송장 번호 | 배송 아이디 | 출고 아이디 | 등록 날짜 | 수정 날짜");
+                                      for (WaybillDto waybillDto : findAll) {
+                                          String updated_at_All = Optional.ofNullable(waybillDto.getUpdated_at()).orElse("");
+                                          System.out.printf("|\t%d\t|\t%s\t|\t%d\t|\t%d\t|\t%s\t|\t%s",
+                                                  waybillDto.getId(),
+                                                  waybillDto.getWaybill_number(),
+                                                  waybillDto.getDelivery_id(),
+                                                  waybillDto.getRelease_id(),
+                                                  waybillDto.getCreated_at(),
+                                                  updated_at_All);
+                                      }
+                                      break;
+                                  case 4:
+                                      break;
+                              }
                               break;
                           case 4:
                               loop = false;

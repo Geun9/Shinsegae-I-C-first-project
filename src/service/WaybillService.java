@@ -1,10 +1,11 @@
 package service;
 
-import dto.ReleaseDto;
+import dto.WaybillDto;
+
+import java.util.List;
 
 public interface WaybillService {
-  public void createRelease(ReleaseDto releaseDto);
-  public void updateRelease(int id);
-  public void approvalRelease();
-  public void stockCheck();
+  public void createRelease(WaybillDto waybillDto);
+  List<WaybillDto> getAll();
+  WaybillDto getId(int id);
 }

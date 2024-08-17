@@ -3,6 +3,7 @@ package dao.daoImpl;
 import common.ReleaseStatus;
 import config.ConnectionFactory;
 import dao.ReleaseDao;
+import dto.DeliveryDto;
 import dto.ReleaseDto;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,11 +28,6 @@ public class ReleaseImplDao implements ReleaseDao {
       System.out.println("주문코드 잘못 입력 또는 해당 상품이 창고에 존재하지 않습니다.");
       return;
     }
-//    findby를 가져오기 위함
-//    UserDao dao = new UserDao();
-
-//    id는 final로 되어있으며 id값의 유저 정보들을 db에서 가지고와 admin 필드에 저장
-//    user = dao.findById(id);
       con = factory.open();
 
       String query = "INSERT INTO releases (id, user_id, product_id, customer_name, customer_address, amount, status, remarks, request_date) VALUES(NULL,?,?,?,?,?,?,?,?)";
@@ -135,6 +131,7 @@ public class ReleaseImplDao implements ReleaseDao {
   //status를 바꿔주는 부분
   @Override
   public void updateRelease(int id, int select){
+    DeliveryImplDao deliveryImplDao = new DeliveryImplDao();
     String query = "UPDATE releases SET status = ?, approval_date = ? WHERE id = ?";
     con = factory.open();
 
@@ -144,8 +141,17 @@ public class ReleaseImplDao implements ReleaseDao {
         pstmt.setString(1, ReleaseStatus.APPROVED.toString());
       else if(select == 2)
         pstmt.setString(1, ReleaseStatus.REJECTED.toString());
-      else
-        pstmt.setString(1, ReleaseStatus.CANCEL.toString());
+      else {
+        List<DeliveryDto> deliveryDtos = deliveryImplDao.findByAll();
+        for (DeliveryDto deliveryDto : deliveryDtos) {
+          if(deliveryDto.getRelease_id() == id) {
+            System.out.println("취소 불가");
+            return ;
+          }
+          pstmt.setString(1, ReleaseStatus.CANCEL.toString());
+        }
+        System.out.println("취소 완료");
+      }
       LocalDateTime dateTime = LocalDateTime.now();
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
       String approval_date = dateTime.format(formatter);

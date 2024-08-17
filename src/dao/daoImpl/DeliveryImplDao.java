@@ -19,6 +19,7 @@ public class DeliveryImplDao implements DeliveryDao {
 
     static Deque<Integer> waitDeliveryMan = new LinkedList<>();
 
+    static ShippingInstructionImplDao instructionImplDao = new ShippingInstructionImplDao();
     @Override
     public void createDelivery(DeliveryDto dto){
         ReleaseImplDao releaseImplDao = new ReleaseImplDao();
@@ -35,7 +36,7 @@ public class DeliveryImplDao implements DeliveryDao {
                 if(deliveryManId != null) {
                     con = factory.open();
 
-                    String query = "INSERT INTO delivery (id, admin_id, created_at, end_date, Release_id, remarks, start_date, status, updated_at, user_id, warehouse_id) " +
+                    String query = "INSERT INTO delivery (id, admin_id, created_at, end_date, Release_id, remarks, start_date , status, updated_at, user_id, warehouse_id) " +
                                     "VALUES(NULL,?,?,?,?,?,?,?,NULL,?,?)";
                     try {
                         pstmt = con.prepareStatement(query);
@@ -80,12 +81,10 @@ public class DeliveryImplDao implements DeliveryDao {
         con = factory.open();
 
         switch (select) {
-            case 1 -> query = "UPDATE delivery SET status = 'CLEAR', updated_at = NOW() WHERE id = ?";
-            case 2 -> query = "UPDATE delivery d INNER JOIN releases r ON d.release_id = r.id " +
-                                "SET d.status = 'CANCEL', r.status = 'CANCEL' " +
-                                 "WHERE d.id = ?";
+            case 1 -> query = "UPDATE delivery SET status = 'OUT', updated_at = NOW() WHERE id = ?";
+            case 2 -> query = "UPDATE delivery SET status = 'CANCEL', updated_at = NOW() WHERE id = ?";
+            case 3 -> query = "UPDATE delivery SET status = 'CLEAR', updated_at = NOW() WHERE id = ?";
         }
-
         try {
             pstmt = con.prepareStatement(query);
             pstmt.setInt(1,id);
@@ -233,7 +232,6 @@ public class DeliveryImplDao implements DeliveryDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return findId;
     }
 
@@ -246,8 +244,12 @@ public class DeliveryImplDao implements DeliveryDao {
 
         if(!deliveryAll.isEmpty()) {
             for (DeliveryDto deliveryDto : deliveryAll) {
-                if (deliveryDto.getDeliveryStatus().toString().equals("CLEAR"))
-                    waitDeliveryMan.add(deliveryDto.getAdmin_id());
+                if (deliveryDto.getDeliveryStatus().toString().equals("CLEAR")) {
+                    if (waitDeliveryMan.size() > deliveryAll.size())
+                        continue;
+                    else
+                        waitDeliveryMan.add(deliveryDto.getAdmin_id());
+                }
                 else if(deliveryDto.getDeliveryStatus().toString().equals("CANCEL"))
                     continue;
                 else

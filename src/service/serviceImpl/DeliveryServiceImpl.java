@@ -16,11 +16,12 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public void updateDelivery(int id) {
+        dao.updateDelivery(id, 2);
     }
 
     @Override
     public void deleteDelivery(int id) {
-        dao.updateDelivery(id, 2);
+
     }
 
 
