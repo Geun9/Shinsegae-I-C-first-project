@@ -21,10 +21,7 @@ public class AdminDto {
     private int authorizerId;
     private String updatedAt;
 
-    public AdminDto(int adminId, String name, String position, String department) {
+    public AdminDto(int id) {
         this.id = id;
-        this.name = name;
-        this.position = position;
-        this.department = department;
     }
 }

@@ -32,7 +32,7 @@ public class ReleaseImplDao implements ReleaseDao {
 
 //    id는 final로 되어있으며 id값의 유저 정보들을 db에서 가지고와 admin 필드에 저장
 //    user = dao.findById(id);
-    con = factory.open();
+      con = factory.open();
 
       String query = "INSERT INTO releases (id, user_id, product_id, customer_name, customer_address, amount, status, remarks, request_date) VALUES(NULL,?,?,?,?,?,?,?,?)";
     try {

@@ -1,7 +1,14 @@
 package service;
 
 
+import dto.DeliveryDto;
+
+import java.util.List;
+
 public interface DeliveryService {
-  public void createDelivery(int id);
-  public void updateDelivery(int id);
+  void createDelivery(DeliveryDto deliveryDto);
+  void updateDelivery(int id);
+  void deleteDelivery(int id);
+  List<DeliveryDto> getAll();
+  //void schedulerOn();
 }

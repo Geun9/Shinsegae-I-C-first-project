@@ -5,9 +5,5 @@ public enum ReleaseStatus {
   APPROVED,
   PENDING,
   REJECTED,
-  CANCEL,
-  DELIVERY,
-  WAYBILL,
-  TRANSIT,
-  CLEAR;
+  CANCEL
 }
