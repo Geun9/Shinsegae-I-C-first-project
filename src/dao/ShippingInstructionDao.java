@@ -1,5 +1,10 @@
 package dao;
 
+import dto.ShippingInstructionDto;
+
+import java.util.List;
+
 public interface ShippingInstructionDao {
-    void createShippingInstruction(int delivery_id, int release_id);
+    void createShippingInstruction();
+    List<ShippingInstructionDto> findAll();
 }

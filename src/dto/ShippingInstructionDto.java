@@ -12,5 +12,4 @@ public class ShippingInstructionDto {
     private int release_id;
     private int delivery_id;
     private String created_at;
-    private String updated_at;
 }

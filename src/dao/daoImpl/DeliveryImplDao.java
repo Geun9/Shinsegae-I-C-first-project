@@ -19,7 +19,6 @@ public class DeliveryImplDao implements DeliveryDao {
 
     static Deque<Integer> waitDeliveryMan = new LinkedList<>();
 
-    static ShippingInstructionImplDao instructionImplDao = new ShippingInstructionImplDao();
     @Override
     public void createDelivery(DeliveryDto dto){
         ReleaseImplDao releaseImplDao = new ReleaseImplDao();

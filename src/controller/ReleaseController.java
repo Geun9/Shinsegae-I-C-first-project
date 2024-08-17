@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import dto.ShippingInstructionDto;
 import dto.WaybillDto;
 import service.serviceImpl.DeliveryServiceImpl;
 import service.serviceImpl.ReleaseServiceImpl;
@@ -140,6 +141,15 @@ public class ReleaseController {
                                       }
                                       break;
                                   case 6:
+                                      List<ShippingInstructionDto> findAll = shippingInstructionService.getAll();
+                                      System.out.println("출고 지시서 아이디 | 배송 아이디 | 출고 아이디 | 등록 날짜 |");
+                                      for (ShippingInstructionDto dto : findAll) {
+                                          System.out.printf("\t%d\t|\t%d\t|\t%d\t|\t%s\t|\n",
+                                                  dto.getId(),
+                                                  dto.getDelivery_id(),
+                                                  dto.getRelease_id(),
+                                                  dto.getCreated_at());
+                                      }
                                       break;
                                   case 7:
                                       break;
@@ -162,6 +172,7 @@ public class ReleaseController {
                                       System.out.println("1.네 2. 아니요");
                                       if (Integer.parseInt(br.readLine()) == 1) {
                                           DeliveryDto deliveryDto = new DeliveryDto(id,remark);
+                                          //shippingInstructionService.createShippingInstruction();
                                           deliveryService.createDelivery(deliveryDto);
                                       }
                                       break;
@@ -229,7 +240,7 @@ public class ReleaseController {
                                       break;
                                   case 5:
                                       DeliveryImplDao deliveryImplDao = new DeliveryImplDao();
-                                      System.out.printf("배송 가능 인원 : %d명 입니다.",deliveryImplDao.waitDeliveryMan().size());
+                                      System.out.printf("배송 가능 인원 : %d명 입니다.\n",deliveryImplDao.waitDeliveryMan().size());
                                       break;
                                   case 6:
                                       break;
@@ -265,7 +276,7 @@ public class ReleaseController {
                                       WaybillDto findId = waybillService.getId(waybill_id);
                                       String updated_at = Optional.ofNullable(findId.getUpdated_at()).orElse("");
                                       System.out.println("운송장 아이디 | 운송장 번호 | 배송 아이디 | 출고 아이디 | 등록 날짜 ㅣ 운송장 수정 날짜");
-                                      System.out.printf("|\t%d\t|\t%s\t|\t%d\t|\t%d\t|\t%s\t|\t%s",
+                                      System.out.printf("|\t%d\t|\t%s\t|\t%d\t|\t%d\t|\t%s\t|\t%s\n",
                                               findId.getId(),
                                               findId.getWaybill_number(),
                                               findId.getDelivery_id(),
@@ -278,7 +289,7 @@ public class ReleaseController {
                                       System.out.println("운송장 아이디 | 운송장 번호 | 배송 아이디 | 출고 아이디 | 등록 날짜 | 수정 날짜");
                                       for (WaybillDto waybillDto : findAll) {
                                           String updated_at_All = Optional.ofNullable(waybillDto.getUpdated_at()).orElse("");
-                                          System.out.printf("|\t%d\t|\t%s\t|\t%d\t|\t%d\t|\t%s\t|\t%s",
+                                          System.out.printf("|\t%d\t|\t%s\t|\t%d\t|\t%d\t|\t%s\t|\t%s\n",
                                                   waybillDto.getId(),
                                                   waybillDto.getWaybill_number(),
                                                   waybillDto.getDelivery_id(),
