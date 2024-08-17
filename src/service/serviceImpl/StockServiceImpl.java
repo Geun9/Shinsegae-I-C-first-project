@@ -1,51 +1,45 @@
 package service.serviceImpl;
 
-import dao.StockDao;
 import dao.daoImpl.StockDaoImpl;
 import dto.StockDto;
 import java.util.List;
 import service.StockService;
 
 /**
- *  StockService 재고 관리에 필요한 비즈니스 로직을 처리
+ * StockService 재고 관리에 필요한 비즈니스 로직을 처리
  */
-
 public class StockServiceImpl implements StockService {
+  private static StockServiceImpl instance;
 
-  private final StockDaoImpl stockDao = StockDaoImpl.getInstance();
+  private StockServiceImpl() {}
 
-  @Override
-  public List<StockDto> getAllStocks() {
-    return stockDao.findAll();
+  public static StockServiceImpl getInstance() {  // 싱글톤
+    if (instance == null) {
+      instance = new StockServiceImpl();
+    }
+    return instance;
   }
 
-  @Override
-  public StockDto getStockById(int id) {
-    return stockDao.findById(id);
+  private StockDaoImpl stockDao = StockDaoImpl.getInstance();
+
+  // 전체 재고 조회
+  public List<StockDto> getAllStock() {
+    return stockDao.findStockAdmin();
   }
 
-  @Override
-  public void addStock(StockDto stockDto) {
-    stockDao.create(stockDto);
+  // 특정 사용자의 재고 조회
+  public List<StockDto> getUserStock(int uID) {
+    return stockDao.findStockUser(uID);
   }
 
-  @Override
-  public void updateStock(StockDto stockDto) {
-    stockDao.update(stockDto);
-  }
-
-  @Override
-  public void deleteStock(int id) {
-    stockDao.delete(id);
-  }
-
-  @Override
-  public List<StockDto> getStocksByCategory(int category_id) {
-    return stockDao.findByCategory(category_id);
-  }
-
-  @Override
-  public List<StockDto> getStockByWarehouse(int warehouse_id) {
-    return stockDao.findByWarehouse(warehouse_id);
+  // 대분류, 중분류, 소분류에 따른 재고 조회
+  public List<StockDto> getFilteredStock(String category, int type) {
+    List<StockDto> stockDtos = stockDao.findStockAdmin();
+    return stockDtos.stream()
+        .filter(stockDto -> (type == 0) ||
+            (type == 1 && stockDto.getT_category().contains(category)) ||
+            (type == 2 && stockDto.getI_category().contains(category)) ||
+            (type == 3 && stockDto.getS_category().contains(category)))
+        .toList();
   }
 }
